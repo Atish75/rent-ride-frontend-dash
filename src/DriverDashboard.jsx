@@ -18,8 +18,8 @@ export default function DriverDashboard() {
   const fetchAll = async () => {
     try {
       const [availRes, mineRes] = await Promise.all([
-        fetch("${API_BASE_URL}/driver/available-bookings/", { headers: authHeaders }),
-        fetch("${API_BASE_URL}/driver/my-bookings/", { headers: authHeaders }),
+        fetch(`${API_BASE_URL}/driver/available-bookings/`, { headers: authHeaders }),
+        fetch(`${API_BASE_URL}/driver/my-bookings/`, { headers: authHeaders }),
       ]);
 
       if (availRes.status === 403 || mineRes.status === 403) {
