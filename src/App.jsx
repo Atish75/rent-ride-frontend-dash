@@ -201,7 +201,7 @@ const [endPoint, setEndPoint] = useState('');
               <button 
                 onClick={() => {
                   if (!isAuthenticated) {
-                    alert("Pehle login kijiye!");
+                    alert("First Login then Proceeded!");
                     navigate("/login");
                   } else {
                     setSelectedCar(car);
