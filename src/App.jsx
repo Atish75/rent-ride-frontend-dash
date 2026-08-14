@@ -1,25 +1,16 @@
-import React, { useEffect, useState, useContext, useMemo, useCallback } from 'react';
+import './App.css'
+import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext.jsx';
 import LocationPicker from './LocationPicker.jsx';
 import { API_BASE_URL } from './config';
 
 function HomePage() {
-  // --- STATE MANAGEMENT ---
   const [cars, setCars] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
   
   const [selectedCar, setSelectedCar] = useState(null);
-  const [bookingDetails, setBookingDetails] = useState({
-    startDate: '',
-    endDate: '',
-    startPoint: '',
-    endPoint: '',
-  });
-
-  // User Role State
-  const [userRoles, setUserRoles] = useState({ isOwner: false, isDriver: false });
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   const [tripType, setTripType] = useState('DATE_RANGE');
   const [startCoords, setStartCoords] = useState(null);
@@ -28,33 +19,14 @@ function HomePage() {
   const navigate = useNavigate();
   const { isAuthenticated, logoutUser } = useContext(AuthContext);
 
-  // --- API SERVICES & SIDE EFFECTS ---
-  
-  // Fetch Cars Catalog
   useEffect(() => {
-    const controller = new AbortController();
-    
-    async function fetchCars() {
-      try {
-        setIsLoading(true);
-        const response = await fetch(`${API_BASE_URL}/cars/`, { signal: controller.signal });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const data = await response.json();
-        setCars(data);
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          console.error('Failed to fetch cars:', error);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchCars();
-    return () => controller.abort();
+    fetch(`${API_BASE_URL}/cars/`)
+      .then((res) => res.json())
+      .then((data) => setCars(data))
+      .catch((err) => console.error("Error fetching cars:", err));
   }, []);
 
-  // Price calculate karne ka logic
+  // Price calculate karne ka logic (Fixed syntax error)
   const calculateTotalPrice = () => {
     if (!startDate || !endDate || !selectedCar) return 0;
     
@@ -64,7 +36,7 @@ function HomePage() {
     const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
     
     return days > 0 ? days * Number(selectedCar.price_per_day) : 0;
-  }, [bookingDetails,startDate, bookingDetails,endDate, selectedCar];
+  };
 
   const haversineEstimate = (a, b) => {
     const R = 6371;
@@ -73,14 +45,14 @@ function HomePage() {
     const x = Math.sin(dLat/2)**2 + Math.cos(a.lat * Math.PI/180) * Math.cos(b.lat * Math.PI/180) * Math.sin(dLon/2)**2;
     return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x));
   };
-  
-  const handleInputChange = useCallback((e) => {
-    const { name, value } = e.target;
-    setBookingDetails((prev) => ({ ...prev, [name]: value }));
-  }, []);
 
-  const handleBookingSubmit = async (e) => {
-    e.preventDefault();
+  const handleBookSubmit = async (e) => {
+    if (e) e.preventDefault();
+
+    if (!selectedCar) {
+      alert("Pehle koi car select karein.");
+      return;
+    }
 
     if (tripType === 'POINT_TO_POINT') {
       if (!startCoords || !endCoords) {
@@ -95,13 +67,6 @@ function HomePage() {
     }
 
     const token = localStorage.getItem('access_token');
-    const payload = {
-      car: selectedCar.id,
-      start_date: bookingDetails.startDate,
-      end_date: bookingDetails.endDate,
-      start_point: bookingDetails.startPoint,
-      end_point: bookingDetails.endPoint,
-    };
 
     try {
       const response = await fetch(`${API_BASE_URL}/book-car/`, {
@@ -118,8 +83,8 @@ function HomePage() {
             start_lng: startCoords?.lng,
             end_lat: endCoords?.lat,
             end_lng: endCoords?.lng,
-            start_point: startCoords?.name,
-            end_point: endCoords?.name,
+            start_point: startCoords?.name || '',
+            end_point: endCoords?.name || '',
           } : {
             start_date: startDate,
             end_date: endDate,
@@ -143,7 +108,7 @@ function HomePage() {
         navigate("/login");
       } else {
         const errorData = await response.json();
-        alert(errorData.error || 'Transaction failed. Check details.');
+        alert(errorData.error || 'Booking failed.');
       }
     } catch (error) {
       console.error('Booking network failure:', error);
@@ -156,7 +121,7 @@ function HomePage() {
   // Cars array me se name, brand, fuel_type, transmission filter karega
   const filteredCars = cars.filter((car) => {
     const query = searchTerm.toLowerCase().trim();
-    if (!query) return true; // Search input khali hai toh saari cars dikhayega
+    if (!query) return true;
 
     return (
       car.name?.toLowerCase().includes(query) ||
@@ -186,7 +151,6 @@ function HomePage() {
   const [startPoint, setStartPoint] = useState('');
   const [endPoint, setEndPoint] = useState('');
 
-  // Today's date string (YYYY-MM-DD) for min attribute in calendar input
   const todayStr = new Date().toISOString().split('T')[0];
 
   return (
@@ -345,7 +309,7 @@ function HomePage() {
                   border: "1px solid #E2E8F0",
                   display: "flex",
                   flexDirection: "column",
-                  justify: "space-between"
+                  justifyContent: "space-between"
                 }}
               >
                 <div>
@@ -445,10 +409,10 @@ function HomePage() {
               {tripType === 'POINT_TO_POINT' ? (
                 <>
                   <div style={{ marginBottom: "1rem" }}>
-                    <LocationPicker label="Pickup Location (click map)" onSelect={(lat, lng, name) => setStartCoords({ lat, lng, name })} />
+                    <LocationPicker label="Pickup Location (click map)" onSelect={(lat, lng) => setStartCoords({ lat, lng })} />
                   </div>
                   <div style={{ marginBottom: "1rem" }}>
-                    <LocationPicker label="Drop-off Location (click map)" onSelect={(lat, lng, name) => setEndCoords({ lat, lng, name })} />
+                    <LocationPicker label="Drop-off Location (click map)" onSelect={(lat, lng) => setEndCoords({ lat, lng })} />
                   </div>
                   {startCoords && endCoords && (
                     <p style={{ color: "#047857", fontWeight: "400", backgroundColor: "#ECFDF5", padding: "0.75rem", borderRadius: "6px", margin: "1rem 0", fontSize: "0.9rem" }}>
@@ -458,7 +422,7 @@ function HomePage() {
                 </>
               ) : (
                 <div style={{ backgroundColor: "#F8FAFC", padding: "1rem", borderRadius: "10px", border: "1px solid #E2E8F0", marginBottom: "1.25rem" }}>
-                  {/* START DESTINATION (PER DAY TRIP) */}
+                  {/* START DESTINATION */}
                   <div style={{ marginBottom: "1rem" }}>
                     <label style={{ display: "block", marginBottom: "0.4rem", fontWeight: "400", fontSize: "0.85rem", color: "#334155" }}>
                       📍 Pickup Location / Start Destination:
@@ -472,7 +436,7 @@ function HomePage() {
                     />
                   </div>
 
-                  {/* END DESTINATION (PER DAY TRIP) */}
+                  {/* END DESTINATION */}
                   <div style={{ marginBottom: "1rem" }}>
                     <label style={{ display: "block", marginBottom: "0.4rem", fontWeight: "400", fontSize: "0.85rem", color: "#334155" }}>
                       🏁 Drop-off Location / End Destination:
