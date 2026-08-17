@@ -1,10 +1,12 @@
 /* Base Container */
 .addcar {
-  max-width: 1400px;
+  max-width: 1800px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   color: #2d3748;
+  background-color: #F8FAFC;   /* 👈 add this */
+  min-height: 100vh; 
 }
 
 /* Page Title */

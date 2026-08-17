@@ -194,14 +194,14 @@ export default function ProfilePage() {
                 onClick={handleToggleDriver} 
                 style={actionButtonStyle("#FEF3C7", "#92400E", "1px solid #FDE68A")}
               >
-                🚕 Toggle Driver Mode
+                 Toggle Driver Mode
               </button>
 
               <button 
                 onClick={handleToggleOwner} 
                 style={actionButtonStyle("#EEF2FF", "#3730A3", "1px solid #C7D2FE")}
               >
-                🚙 Toggle Car Owner Mode
+                 Toggle Car Owner Mode
               </button>
             </div>
           </div>

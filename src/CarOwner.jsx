@@ -107,7 +107,7 @@ export default function OwnerDashboard() {
           gap: "0.75rem"
         }}>
           <h2 style={{ margin: 0, fontSize: "1.35rem", fontWeight: "500", color: "#0F172A", letterSpacing: "-0.5px" }}>
-            🚙 My Cars
+             My Cars
           </h2>
           <div style={{ display: "flex", gap: "0.5rem" }}>
             <button 
@@ -273,14 +273,14 @@ export default function OwnerDashboard() {
                       <p style={detailTextStyle}>👤 <strong>Booked by:</strong> {car.booking.customer_name}</p>
                       <p style={detailTextStyle}>📧 <strong>Contact:</strong> {car.booking.customer_email || 'N/A'}</p>
                       {car.booking.start_point && car.booking.end_point && (
-                        <p style={detailTextStyle}>🛣️ <strong>Route:</strong> {car.booking.start_point} → {car.booking.end_point}</p>
+                        <p style={detailTextStyle}> <strong>Route:</strong> {car.booking.start_point} → {car.booking.end_point}</p>
                       )}
-                      <p style={detailTextStyle}>📅 <strong>Dates:</strong> {car.booking.start_date} → {car.booking.end_date}</p>
-                      <p style={detailTextStyle}>💰 <strong>Trip Price:</strong> ₹{car.booking.total_price}</p>
+                      <p style={detailTextStyle}> <strong>Dates:</strong> {car.booking.start_date} → {car.booking.end_date}</p>
+                      <p style={detailTextStyle}> <strong>Trip Price:</strong> ₹{car.booking.total_price}</p>
                       <p style={detailTextStyle}>
-                        🚕 <strong>Driver:</strong> {car.booking.driver_username || <span style={{ color: "#B91C1C" }}>Not assigned yet</span>}
+                         <strong>Driver:</strong> {car.booking.driver_username || <span style={{ color: "#B91C1C" }}>Not assigned yet</span>}
                       </p>
-                      <p style={detailTextStyle}>📊 <strong>Status:</strong> {car.booking.status}</p>
+                      <p style={detailTextStyle}> <strong>Status:</strong> {car.booking.status}</p>
 
                       <button
                         onClick={() => navigate(`/track/${car.id}`)}

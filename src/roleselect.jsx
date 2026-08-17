@@ -85,7 +85,7 @@ export default function RoleSelect() {
             onClick={() => chooseRole('customer')} 
             style={roleButtonStyle("#2563EB", "#FFFFFF")}
           >
-            🚘 Continue as Customer
+             Continue as Customer
           </button>
 
           {/* DRIVER ROLE BUTTON */}
@@ -94,7 +94,7 @@ export default function RoleSelect() {
               onClick={() => chooseRole('driver')} 
               style={roleButtonStyle("#FEF3C7", "#92400E", "1px solid #FDE68A")}
             >
-              🚕 Continue as Driver
+               Continue as Driver
             </button>
           )}
 
@@ -104,7 +104,7 @@ export default function RoleSelect() {
               onClick={() => chooseRole('owner')} 
               style={roleButtonStyle("#EEF2FF", "#3730A3", "1px solid #C7D2FE")}
             >
-              🚙 Continue as Car Owner
+              Continue as Car Owner
             </button>
           )}
 

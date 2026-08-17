@@ -193,10 +193,10 @@ export default function BookedCars() {
                       </p>
                     )}
                     <p style={{ margin: "0.25rem 0", color: "#475569", fontSize: "0.9rem", fontWeight: "300" }}>
-                      📅 <strong>Dates:</strong> {item.start_date} ➔ {item.end_date}
+                       <strong>Dates:</strong> {item.start_date} ➔ {item.end_date}
                     </p>
                     <p style={{ margin: "0.25rem 0", color: "#475569", fontSize: "0.9rem", fontWeight: "300" }}>
-                      ⏳ <strong>Duration:</strong> {days} {days === 1 ? 'Day' : 'Days'}
+                       <strong>Duration:</strong> {days} {days === 1 ? 'Day' : 'Days'}
                     </p>
                     <p style={{ margin: "0.5rem 0 0 0" }}>
                       <span style={{ 
@@ -209,7 +209,7 @@ export default function BookedCars() {
                         fontSize: "0.8rem", 
                         fontWeight: "400" 
                       }}>
-                        {item.driver ? `🚕 Driver Assigned: ${item.driver_username || 'Yes'}` : '⏳ Waiting for driver'}
+                        {item.driver ? ` Driver Assigned: ${item.driver_username || 'Yes'}` : ' Waiting for driver'}
                       </span>
                     </p>
                         {item.driver && item.status === "ACTIVE" && item.otp && (
@@ -220,7 +220,7 @@ export default function BookedCars() {
                     {item.status === "AWAITING_CONFIRMATION" && (
                       <div style={{ marginTop: "1rem", padding: "0.85rem", backgroundColor: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: "8px" }}>
                         <p style={{ margin: "0 0 0.6rem 0", fontWeight: "400", color: "#92400E", fontSize: "0.875rem" }}>
-                          🏁 Your driver marked this trip as complete. Is that correct?
+                           Your driver marked this trip as complete. Is that correct?
                         </p>
                         <div style={{ display: "flex", gap: "0.5rem" }}>
                           <button
@@ -269,8 +269,8 @@ export default function BookedCars() {
                       border: item.status === "COMPLETED" ? "1px solid #A7F3D0" : item.status === "PENDING_PAYMENT" ? "1px solid #FDE68A" : item.status === "AWAITING_CONFIRMATION" ? "1px solid #FDE68A" : "1px solid #A7F3D0"
                     }}>
                       {item.status === "COMPLETED" ? "Completed ✅"
-                      : item.status === "PENDING_PAYMENT" ? "Awaiting Payment 💳"
-                      : item.status === "AWAITING_CONFIRMATION" ? "Confirm Trip 🏁"
+                      : item.status === "PENDING_PAYMENT" ? "Awaiting Payment "
+                      : item.status === "AWAITING_CONFIRMATION" ? "Confirm Trip "
                       : "Confirmed ✅"}
                     </span>
 

@@ -204,7 +204,7 @@ const handleStartRide = async (bookingId) => {
           gap: "1rem"
         }}>
           <h2 style={{ margin: 0, fontSize: "1.5rem", fontWeight: "400", color: "#0F172A", letterSpacing: "-0.5px" }}>
-            🚕 Driver Dashboard
+             Driver Dashboard
           </h2>
           <div style={{ display: "flex", gap: "0.5rem" }}>
             <button 
@@ -224,7 +224,7 @@ const handleStartRide = async (bookingId) => {
 
         {/* SECTION 1: AVAILABLE BOOKINGS */}
         <h3 style={{ margin: "0 0 1rem 0", fontSize: "1.2rem", fontWeight: "400", color: "#334155" }}>
-          📋 Available Bookings
+           Available Bookings
         </h3>
 
         {available.length === 0 ? (
@@ -267,7 +267,7 @@ const handleStartRide = async (bookingId) => {
 
                   {b.trip_type === 'POINT_TO_POINT' ? (
                   <span style={{ color: "#475569", fontSize: "0.875rem", fontWeight: "300" }}>
-                  🛣️ One-way trip{b.distance_km && ` — ${b.distance_km} km`}
+                   One-way trip{b.distance_km && ` — ${b.distance_km} km`}
                   </span>
                   ) : (
                   <span style={{ color: "#64748B", fontSize: "0.875rem", fontWeight: "300" }}>
@@ -283,7 +283,7 @@ const handleStartRide = async (bookingId) => {
 
                   <br />
                   <span style={{ color: "#047857", fontWeight: "500", fontSize: "1rem", marginTop: "0.25rem", display: "inline-block" }}>
-                    💰 ₹{b.total_price}
+                     ₹{b.total_price}
                   </span>
                 </div>
 
@@ -308,7 +308,7 @@ const handleStartRide = async (bookingId) => {
 
         {/* SECTION 2: MY ACTIVE RIDES */}
         <h3 style={{ margin: "0 0 1rem 0", fontSize: "1.2rem", fontWeight: "400", color: "#334155" }}>
-          🚗 My Active Rides (Sharing Live Location)
+           My Active Rides (Sharing Live Location)
         </h3>
 
         {myBookings.length === 0 ? (

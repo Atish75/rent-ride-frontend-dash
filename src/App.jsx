@@ -104,7 +104,7 @@ function HomePage() {
         setEndCoords(null);
         navigate("/booked-cars");
       } else if (response.status === 401) {
-        alert("Pehle login kijiye!");
+        alert("Login First To Book !");
         navigate("/login");
       } else {
         const errorData = await response.json();
@@ -281,7 +281,7 @@ function HomePage() {
           <div style={{ position: "relative", flex: "1", maxWidth: "480px" }}>
             <input
               type="text"
-              placeholder="🔍 Search cars..."
+              placeholder="Search cars..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
@@ -452,7 +452,7 @@ function HomePage() {
                   {/* START DESTINATION */}
                   <div style={{ marginBottom: "1rem" }}>
                     <label style={{ display: "block", marginBottom: "0.4rem", fontWeight: "400", fontSize: "0.85rem", color: "#334155" }}>
-                      📍 Pickup Location / Start Destination:
+                       Pickup Location / Start Destination:
                     </label>
                     <input 
                       type="text" 
@@ -466,7 +466,7 @@ function HomePage() {
                   {/* END DESTINATION */}
                   <div style={{ marginBottom: "1rem" }}>
                     <label style={{ display: "block", marginBottom: "0.4rem", fontWeight: "400", fontSize: "0.85rem", color: "#334155" }}>
-                      🏁 Drop-off Location / End Destination:
+                       Drop-off Location / End Destination:
                     </label>
                     <input 
                       type="text" 
@@ -480,7 +480,7 @@ function HomePage() {
                   {/* CALENDAR DATE SELECTORS */}
                   <div style={{ marginBottom: "1rem" }}>
                     <label style={{ display: "block", marginBottom: "0.4rem", fontWeight: "400", fontSize: "0.85rem", color: "#334155" }}>
-                      📅 Start Date:
+                       Start Date:
                     </label>
                     <input 
                       type="date" 
@@ -494,7 +494,7 @@ function HomePage() {
 
                   <div style={{ marginBottom: "1rem" }}>
                     <label style={{ display: "block", marginBottom: "0.4rem", fontWeight: "400", fontSize: "0.85rem", color: "#334155" }}>
-                      📅 End Date:
+                       End Date:
                     </label>
                     <input 
                       type="date" 

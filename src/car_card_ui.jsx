@@ -99,7 +99,7 @@ function Addcar() {
         {/* TOP NAVIGATION & HEADER */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem" }}>
           <h2 style={{ margin: 0, fontSize: "1.5rem", fontWeight: "400", color: "#0F172A", letterSpacing: "-0.5px" }} className="title">
-            🚗 Car Management Dashboard
+            Car Management Dashboard
           </h2>
           <button
             onClick={() => navigate("/")}

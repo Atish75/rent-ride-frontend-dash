@@ -73,7 +73,7 @@ export default function Login() {
                     color: '#0F172A',
                     letterSpacing: '-0.5px'
                 }}>
-                    Login to Rent Ride 🚗
+                    Login to Rent Ride 
                 </h2>
                 
                 {errorMsg && (
