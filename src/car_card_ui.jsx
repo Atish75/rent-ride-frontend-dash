@@ -94,7 +94,7 @@ function Addcar() {
       padding: "2rem 1.5rem"
     }} className="addcar">
 
-      <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "100%", margin: "0 auto" }}>
         
         {/* TOP NAVIGATION & HEADER */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.75rem" }}>
