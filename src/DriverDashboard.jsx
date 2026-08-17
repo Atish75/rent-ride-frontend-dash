@@ -6,6 +6,7 @@ export default function DriverDashboard() {
   const [available, setAvailable] = useState([]);
   const [myBookings, setMyBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [otpInputs, setOtpInputs] = useState({});
   const navigate = useNavigate();
   const token = localStorage.getItem('access_token');
   const gpsIntervalsRef = useRef({}); // track active GPS intervals per carId
@@ -157,6 +158,31 @@ export default function DriverDashboard() {
     </div>
   );
 
+
+const handleStartRide = async (bookingId) => {
+  const otp = otpInputs[bookingId];
+  if (!otp) {
+    alert("Please enter the OTP the customer gave you.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/driver/bookings/${bookingId}/start-ride/`, {
+      method: "POST",
+      headers: authHeaders,
+      body: JSON.stringify({ otp })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      alert(data.message);
+      fetchAll();
+    } else {
+      alert(data.error || "Could not start ride.");
+    }
+  } catch (err) {
+    console.error("Start ride error:", err);
+  }
+};
   return (
     <div style={{ 
       backgroundColor: "#F8FAFC", 
@@ -240,27 +266,19 @@ export default function DriverDashboard() {
                   <br />
 
                   {b.trip_type === 'POINT_TO_POINT' ? (
-                    <>
-                      <span style={{ color: "#475569", fontSize: "0.875rem", fontWeight: "300" }}>
-                        🛣️ One-way trip {b.distance_km && ` — ${b.distance_km} km`}
-                      </span><br />
-                      {b.start_lat && b.end_lat && (
-                        <span style={{ color: "#64748B", fontSize: "0.8rem", fontWeight: "300" }}>
-                          📍 {b.start_lat.toFixed(4)}, {b.start_lng.toFixed(4)} → {b.end_lat.toFixed(4)}, {b.end_lng.toFixed(4)}
-                        </span>
-                      )}
-                    </>
+                  <span style={{ color: "#475569", fontSize: "0.875rem", fontWeight: "300" }}>
+                  🛣️ One-way trip{b.distance_km && ` — ${b.distance_km} km`}
+                  </span>
                   ) : (
-                    <>
-                      <span style={{ color: "#64748B", fontSize: "0.875rem", fontWeight: "300" }}>
-                        {b.start_date} → {b.end_date}
-                      </span><br />
-                      {b.start_point && b.end_point && (
-                        <span style={{ color: "#475569", fontSize: "0.875rem", fontWeight: "300" }}>
-                          🛣️ {b.start_point} → {b.end_point}
-                        </span>
-                      )}
-                    </>
+                  <span style={{ color: "#64748B", fontSize: "0.875rem", fontWeight: "300" }}>
+                    {b.start_date} → {b.end_date}
+                  </span>
+                  )}
+                  <br />
+                  {b.start_point && b.end_point && (
+                  <span style={{ color: "#475569", fontSize: "0.875rem", fontWeight: "300" }}>
+                  📍 {b.start_point} → {b.end_point}
+                  </span>
                   )}
 
                   <br />
@@ -346,14 +364,35 @@ export default function DriverDashboard() {
                     🟢 Broadcasting live location
                   </span>
                 </div>
-
-                <div style={{ display: "flex", gap: "0.5rem" }}>
-                  <button
-                    onClick={() => handleCompleteTrip(b.id)}
-                    style={cardActionStyle("#EFF6FF", "#1E40AF", "1px solid #BFDBFE")}
-                  >
-                    🏁 Complete Trip
-                  </button>
+                    <span style={{ color: "#0284C7", fontWeight: "400", fontSize: "0.85rem", marginTop: "0.2rem", display: "inline-block" }}>
+  {b.status === "ACTIVE" ? "⏳ Waiting for OTP to start ride" : "🟢 Ride in progress — Broadcasting live location"}
+</span>
+                <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+  {b.status === "ACTIVE" ? (
+    <>
+      <input
+        type="text"
+        placeholder="Enter OTP"
+        maxLength={4}
+        value={otpInputs[b.id] || ''}
+        onChange={(e) => setOtpInputs({ ...otpInputs, [b.id]: e.target.value })}
+        style={{ padding: "0.45rem", borderRadius: "6px", border: "1px solid #CBD5E1", width: "100px" }}
+      />
+      <button
+        onClick={() => handleStartRide(b.id)}
+        style={cardActionStyle("#EFF6FF", "#1E40AF", "1px solid #BFDBFE")}
+      >
+        ▶️ Start Ride
+      </button>
+    </>
+  ) : (
+    <button
+      onClick={() => handleCompleteTrip(b.id)}
+      style={cardActionStyle("#EFF6FF", "#1E40AF", "1px solid #BFDBFE")}
+    >
+      🏁 Complete Trip
+    </button>
+  )}
                   <button
                     onClick={() => handleCancelAssignment(b.id)}
                     style={cardActionStyle("#FEF2F2", "#991B1B", "1px solid #FCA5A5")}

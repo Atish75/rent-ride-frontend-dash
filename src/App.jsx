@@ -15,7 +15,7 @@ function HomePage() {
   const [tripType, setTripType] = useState('DATE_RANGE');
   const [startCoords, setStartCoords] = useState(null);
   const [endCoords, setEndCoords] = useState(null);
-
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { isAuthenticated, logoutUser } = useContext(AuthContext);
 
@@ -153,6 +153,18 @@ function HomePage() {
 
   const todayStr = new Date().toISOString().split('T')[0];
 
+  const mobileNavButtonStyle = (bgColor, textColor) => ({
+  width: "100%",
+  padding: "0.65rem 1rem",
+  backgroundColor: bgColor,
+  color: textColor,
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontSize: "0.9rem",
+  fontWeight: "400",
+  textAlign: "left"
+});
   return (
     <div style={{ 
       backgroundColor: "#F8FAFC", 
@@ -164,83 +176,98 @@ function HomePage() {
       
       {/* ☀️ CLEAN WHITE LIGHT NAVBAR */}
       <nav style={{ 
-        backgroundColor: "#FFFFFF", 
-        padding: "0.85rem 2rem", 
-        display: "flex", 
-        justifyContent: "space-between", 
-        alignItems: "center",
-        borderBottom: "1px solid #E2E8F0",
-        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
-        position: "sticky",
-        top: 0,
-        zIndex: 100
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <h2 style={{ color: "#0F172A", margin: 0, fontSize: "1.35rem", fontWeight: "400", letterSpacing: "0.5px" }}>
-            Rent Ride
-          </h2>
-        </div>
+  backgroundColor: "#FFFFFF", 
+  padding: "0.85rem 1.5rem", 
+  display: "flex", 
+  justifyContent: "space-between", 
+  alignItems: "center",
+  borderBottom: "1px solid #E2E8F0",
+  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
+  position: "sticky",
+  top: 0,
+  zIndex: 100
+}}>
+  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+    <h2 style={{ color: "#0F172A", margin: 0, fontSize: "1.35rem", fontWeight: "400", letterSpacing: "0.5px" }}>
+      Rent Ride
+    </h2>
+  </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          {isAuthenticated ? (
-            <>
-              <button 
-                onClick={() => navigate("/booked-cars")} 
-                style={navButtonStyle("#F1F5F9", "#334155", "1px solid #CBD5E1")}
-              >
-                My Bookings
-              </button>
-              
-              {isDriver && (
-                <button 
-                  onClick={() => navigate("/driver-dashboard")} 
-                  style={navButtonStyle("#FEF3C7", "#92400E", "1px solid #FDE68A")}
-                >
-                   Driver Dashboard
-                </button>
-              )}
+  {/* Desktop nav — hidden on mobile */}
+  <div className="navbar-desktop" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+    {isAuthenticated ? (
+      <>
+        <button onClick={() => navigate("/booked-cars")} style={navButtonStyle("#F1F5F9", "#334155", "1px solid #CBD5E1")}>My Bookings</button>
+        {isDriver && (
+          <button onClick={() => navigate("/driver-dashboard")} style={navButtonStyle("#FEF3C7", "#92400E", "1px solid #FDE68A")}>Driver Dashboard</button>
+        )}
+        {isOwner && (
+          <button onClick={() => navigate("/owner-dashboard")} style={navButtonStyle("#EEF2FF", "#3730A3", "1px solid #C7D2FE")}>My Cars</button>
+        )}
+        <button onClick={() => navigate("/profile")} style={navButtonStyle("#F1F5F9", "#334155", "1px solid #CBD5E1")}>Profile 👤</button>
+        <button onClick={logoutUser} style={navButtonStyle("#FEF2F2", "#991B1B", "1px solid #FCA5A5")}>Logout</button>
+      </>
+    ) : (
+      <>
+        <button onClick={() => navigate("/login")} style={navButtonStyle("#F8FAFC", "#334155", "1px solid #CBD5E1")}>Login</button>
+        <button onClick={() => navigate("/register")} style={navButtonStyle("#2563EB", "#FFFFFF")}>Sign Up</button>
+      </>
+    )}
+  </div>
 
-              {isOwner && (
-                <button 
-                  onClick={() => navigate("/owner-dashboard")} 
-                  style={navButtonStyle("#EEF2FF", "#3730A3", "1px solid #C7D2FE")}
-                >
-                  My Cars
-                </button>
-              )}
+  {/* Hamburger button — shown on mobile only */}
+  <button
+    className="navbar-hamburger"
+    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+    style={{
+      display: "none",
+      background: "none",
+      border: "none",
+      cursor: "pointer",
+      padding: "0.4rem",
+      fontSize: "1.5rem",
+      color: "#334155"
+    }}
+    aria-label="Toggle menu"
+  >
+    {mobileMenuOpen ? "✕" : "☰"}
+  </button>
+</nav>
 
-              <button 
-                onClick={() => navigate("/profile")} 
-                style={navButtonStyle("#F1F5F9", "#334155", "1px solid #CBD5E1")}
-              >
-                Profile 👤
-              </button>
+{/* Mobile dropdown menu */}
+{mobileMenuOpen && (
+  <div className="navbar-mobile-dropdown" style={{
+    backgroundColor: "#FFFFFF",
+    borderBottom: "1px solid #E2E8F0",
+    display: "none",
+    flexDirection: "column",
+    padding: "0.5rem 1.5rem 1rem 1.5rem",
+    gap: "0.5rem",
+    position: "sticky",
+    top: "60px",
+    zIndex: 99
+  }}>
+    {isAuthenticated ? (
+      <>
+        <button onClick={() => { navigate("/booked-cars"); setMobileMenuOpen(false); }} style={mobileNavButtonStyle("#F1F5F9", "#334155")}>My Bookings</button>
+        {isDriver && (
+          <button onClick={() => { navigate("/driver-dashboard"); setMobileMenuOpen(false); }} style={mobileNavButtonStyle("#FEF3C7", "#92400E")}>Driver Dashboard</button>
+        )}
+        {isOwner && (
+          <button onClick={() => { navigate("/owner-dashboard"); setMobileMenuOpen(false); }} style={mobileNavButtonStyle("#EEF2FF", "#3730A3")}>My Cars</button>
+        )}
+        <button onClick={() => { navigate("/profile"); setMobileMenuOpen(false); }} style={mobileNavButtonStyle("#F1F5F9", "#334155")}>Profile 👤</button>
+        <button onClick={() => { logoutUser(); setMobileMenuOpen(false); }} style={mobileNavButtonStyle("#FEF2F2", "#991B1B")}>Logout</button>
+      </>
+    ) : (
+      <>
+        <button onClick={() => { navigate("/login"); setMobileMenuOpen(false); }} style={mobileNavButtonStyle("#F8FAFC", "#334155")}>Login</button>
+        <button onClick={() => { navigate("/register"); setMobileMenuOpen(false); }} style={mobileNavButtonStyle("#2563EB", "#FFFFFF")}>Sign Up</button>
+      </>
+    )}
+  </div>
+)}
 
-              <button 
-                onClick={logoutUser} 
-                style={navButtonStyle("#FEF2F2", "#991B1B", "1px solid #FCA5A5")}
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <button 
-                onClick={() => navigate("/login")} 
-                style={navButtonStyle("#F8FAFC", "#334155", "1px solid #CBD5E1")}
-              >
-                Login
-              </button>
-              <button 
-                onClick={() => navigate("/register")} 
-                style={navButtonStyle("#2563EB", "#FFFFFF")}
-              >
-                Sign Up
-              </button>
-            </>
-          )}
-        </div>
-      </nav>
 
       {/* MAIN CONTENT */}
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "2.5rem 1.5rem 1rem 1.5rem" }}>
@@ -409,10 +436,10 @@ function HomePage() {
               {tripType === 'POINT_TO_POINT' ? (
                 <>
                   <div style={{ marginBottom: "1rem" }}>
-                    <LocationPicker label="Pickup Location (click map)" onSelect={(lat, lng) => setStartCoords({ lat, lng })} />
+                    <LocationPicker label="Pickup Location (click map)" onSelect={(lat, lng, name) => setStartCoords({ lat, lng, name })} />
                   </div>
                   <div style={{ marginBottom: "1rem" }}>
-                    <LocationPicker label="Drop-off Location (click map)" onSelect={(lat, lng) => setEndCoords({ lat, lng })} />
+                    <LocationPicker label="Drop-off Location (click map)" onSelect={(lat, lng, name) => setEndCoords({ lat, lng, name })} />
                   </div>
                   {startCoords && endCoords && (
                     <p style={{ color: "#047857", fontWeight: "400", backgroundColor: "#ECFDF5", padding: "0.75rem", borderRadius: "6px", margin: "1rem 0", fontSize: "0.9rem" }}>

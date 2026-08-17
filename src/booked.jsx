@@ -212,7 +212,11 @@ export default function BookedCars() {
                         {item.driver ? `🚕 Driver Assigned: ${item.driver_username || 'Yes'}` : '⏳ Waiting for driver'}
                       </span>
                     </p>
-
+                        {item.driver && item.status === "ACTIVE" && item.otp && (
+  <p style={{ margin: "0.3rem 0", padding: "0.5rem", backgroundColor: "#FEF3C7", borderRadius: "6px", fontWeight: "bold", color: "#92400E" }}>
+    🔑 Share this OTP with your driver: <strong>{item.otp}</strong>
+  </p>
+)}
                     {item.status === "AWAITING_CONFIRMATION" && (
                       <div style={{ marginTop: "1rem", padding: "0.85rem", backgroundColor: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: "8px" }}>
                         <p style={{ margin: "0 0 0.6rem 0", fontWeight: "400", color: "#92400E", fontSize: "0.875rem" }}>
