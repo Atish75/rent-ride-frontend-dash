@@ -17,6 +17,9 @@ function Addcar() {
     price_per_day: "",
     price_per_km: "",
     image: null,
+    rc_document: null,        
+    insurance_document: null, 
+    puc_document: null,  
     available: true
   });
 
@@ -219,7 +222,22 @@ function Addcar() {
                 style={{ ...inputStyle, padding: "0.45rem" }}
               />
             </div>
-
+            <div className="form-row">
+  <div>
+    <label style={{ fontSize: "0.85rem", display: "block", marginBottom: "0.3rem" }}>RC Document:</label>
+    <input type="file" accept="image/*" onChange={(e) => setNewCar({ ...newCar, rc_document: e.target.files[0] })} required />
+  </div>
+  <div>
+    <label style={{ fontSize: "0.85rem", display: "block", marginBottom: "0.3rem" }}>Insurance:</label>
+    <input type="file" accept="image/*" onChange={(e) => setNewCar({ ...newCar, insurance_document: e.target.files[0] })} required />
+  </div>
+</div>
+<div className="form-row">
+  <div>
+    <label style={{ fontSize: "0.85rem", display: "block", marginBottom: "0.3rem" }}>PUC Certificate:</label>
+    <input type="file" accept="image/*" onChange={(e) => setNewCar({ ...newCar, puc_document: e.target.files[0] })} required />
+  </div>
+</div>
             <label className="checkbox" style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.9rem", color: "#475569", fontWeight: "300", cursor: "pointer" }}>
               <input
                 type="checkbox"

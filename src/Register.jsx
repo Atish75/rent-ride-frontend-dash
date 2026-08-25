@@ -54,7 +54,7 @@ export default function Register() {
                     color: '#0F172A',
                     letterSpacing: '-0.5px'
                 }}>
-                    Create Account 🚗
+                    Create Account 
                 </h2>
                 
                 {errorMsg && (

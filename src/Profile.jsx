@@ -7,7 +7,10 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ first_name: '', last_name: '', email: '', phone: '' });
-
+  const [driverDocs, setDriverDocs] = useState({ driver_photo: null, driver_license: null });  
+  const [ownerDocs, setOwnerDocs] = useState({ owner_photo: null, owner_rc: null, owner_insurance: null, owner_puc: null });  
+  const [showDriverDocs, setShowDriverDocs] = useState(false);
+  const [showOwnerDocs, setShowOwnerDocs] = useState(false);
   const navigate = useNavigate();
   const token = localStorage.getItem('access_token');
 
@@ -70,22 +73,37 @@ export default function ProfilePage() {
   };
 
   const handleToggleDriver = async () => {
-    const res = await fetch(`${API_BASE_URL}/profile/toggle-driver/`, {
-      method: "POST",
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    const data = await res.json();
-    alert(data.is_driver ? "You're now a registered driver!" : "Driver mode disabled.");
-  };
+  const res = await fetch(`${API_BASE_URL}/profile/toggle-driver/`, {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${token}` }
+  });
+  const data = await res.json();
 
+  if (res.ok) {
+    alert(data.is_driver ? "You're now a registered driver!" : "Driver mode disabled.");
+    setUser({ ...user, is_driver: data.is_driver });
+    setShowDriverDocs(false);
+  } else {
+    alert(data.error || "Could not toggle driver mode.");
+    setShowDriverDocs(true);  
+  }
+};
   const handleToggleOwner = async () => {
-    const res = await fetch(`${API_BASE_URL}/profile/toggle-owner/`, {
-      method: "POST",
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-    const data = await res.json();
+  const res = await fetch(`${API_BASE_URL}/profile/toggle-owner/`, {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${token}` }
+  });
+  const data = await res.json();
+
+  if (res.ok) {
     alert(data.is_owner ? "You're now a registered car owner!" : "Owner mode disabled.");
-  };
+    setUser({ ...user, is_owner: data.is_owner });
+    setShowOwnerDocs(false);
+  } else {
+    alert(data.error || "Could not toggle owner mode.");
+    setShowOwnerDocs(true);  
+  }
+};
 
   if (loading) return (
     <div style={{ 
@@ -101,6 +119,67 @@ export default function ProfilePage() {
     </div>
   );
 
+
+const handleUploadDriverDocs = async () => {
+  const formData = new FormData();
+  if (driverDocs.driver_photo) formData.append('driver_photo', driverDocs.driver_photo);
+  if (driverDocs.driver_license) formData.append('driver_license', driverDocs.driver_license);
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/profile/upload-driver-docs/`, {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}` },
+      body: formData
+    });
+    const data = await res.json();
+    if (res.ok) {
+      alert("Driver documents uploaded!");
+      setUser({ ...user, driver_photo: data.driver_photo, driver_license: data.driver_license });
+    } else {
+      alert(data.error || "Upload failed.");
+    }
+  } catch (err) {
+    console.error("Upload error:", err);
+  }
+};
+
+const handleUploadOwnerDocs = async () => {
+  const formData = new FormData();
+  if (ownerDocs.owner_photo) formData.append('owner_photo', ownerDocs.owner_photo);
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/profile/upload-owner-docs/`, {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}` },
+      body: formData
+    });
+    const data = await res.json();
+    if (res.ok) {
+      alert("Owner photo uploaded!");
+      setUser({ ...user, owner_photo: data.owner_photo });
+    } else {
+      alert(data.error || "Upload failed.");
+    }
+  } catch (err) {
+    console.error("Upload error:", err);
+  }
+};
+const handleDeleteDoc = async (type, fieldName) => {
+  if (!window.confirm("Delete this document?")) return;
+  const endpoint = type === 'driver' ? 'delete-driver-doc' : 'delete-owner-doc';
+  try {
+    const res = await fetch(`${API_BASE_URL}/profile/${endpoint}/${fieldName}/`, {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    if (res.ok) {
+      alert("Deleted.");
+      setUser({ ...user, [fieldName]: null });
+    }
+  } catch (err) {
+    console.error("Delete error:", err);
+  }
+};
   return (
     <div style={{ 
       backgroundColor: "#F8FAFC", 
@@ -191,18 +270,109 @@ export default function ProfilePage() {
               </button>
 
               <button 
-                onClick={handleToggleDriver} 
-                style={actionButtonStyle("#FEF3C7", "#92400E", "1px solid #FDE68A")}
-              >
-                 Toggle Driver Mode
-              </button>
+  onClick={handleToggleDriver} 
+  style={actionButtonStyle("#FEF3C7", "#92400E", "1px solid #FDE68A")}
+>
+   Toggle Driver Mode
+</button>
+<button
+  onClick={() => setShowDriverDocs(!showDriverDocs)}
+  style={{ background: "none", border: "none", color: "#2563EB", fontSize: "0.8rem", cursor: "pointer", padding: "0.3rem 0", textAlign: "left" }}
+>
+  {showDriverDocs ? "▲ Hide driver documents" : "📄 Manage driver documents"}
+</button>
+{showDriverDocs && (
+  <div style={{ marginTop: "0.5rem", padding: "1rem", backgroundColor: "#f8f9fa", borderRadius: "8px" }}>
+    <h4 style={{ margin: "0 0 0.8rem 0" }}>Driver Documents</h4>
+    <p style={{ fontSize: "0.8rem", color: user?.driver_photo && user?.driver_license ? "#28a745" : "#dc3545" }}>
+      {user?.driver_photo && user?.driver_license ? "✅ Both documents uploaded" : "⚠️ Required before enabling Driver mode"}
+    </p>
+
+    <label style={{ display: "block", fontSize: "0.85rem", marginBottom: "0.3rem" }}>Photo:</label>
+    {user?.driver_photo && (
+     <div style={{ marginBottom: "0.5rem" }}>
+    <img
+      src={user.driver_photo}
+      alt="Driver photo"
+      style={{ width: "220px", height: "120px", objectFit: "cover", borderRadius: "8px", border: "1px solid #ddd", display: "block", marginBottom: "0.35rem" }}
+    />
+    <button
+      onClick={() => handleDeleteDoc('driver', 'driver_photo')}
+      style={{ fontSize: "0.75rem", color: "#dc3545", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+    >
+      🗑️ Delete photo
+    </button>
+  </div>
+      
+   )}
+    <input type="file" accept="image/*" onChange={(e) => setDriverDocs({ ...driverDocs, driver_photo: e.target.files[0] })} style={{ marginBottom: "0.6rem", display: "block" }} />
+
+    <label style={{ display: "block", fontSize: "0.85rem", marginBottom: "0.3rem" }}>Driving License:</label>
+    {user?.driver_license && (
+  <div style={{ marginBottom: "0.5rem" }}>
+    <img
+      src={user.driver_license}
+      alt="Driver license"
+      style={{ width: "220px", height: "120px", objectFit: "cover", borderRadius: "8px", border: "1px solid #ddd", display: "block", marginBottom: "0.35rem" }}
+    />
+    <button
+      onClick={() => handleDeleteDoc('driver', 'driver_license')}
+      style={{ fontSize: "0.75rem", color: "#dc3545", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+    >
+      🗑️ Delete license
+    </button>
+  </div>
+)}
+    <input type="file" accept="image/*" onChange={(e) => setDriverDocs({ ...driverDocs, driver_license: e.target.files[0] })} style={{ marginBottom: "0.8rem", display: "block" }} />
+
+    <button onClick={handleUploadDriverDocs} style={{ padding: "0.5rem 1rem", backgroundColor: "#007bff", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer" }}>
+      Upload Driver Documents
+    </button>
+  </div>
+)}
 
               <button 
-                onClick={handleToggleOwner} 
-                style={actionButtonStyle("#EEF2FF", "#3730A3", "1px solid #C7D2FE")}
-              >
-                 Toggle Car Owner Mode
-              </button>
+  onClick={handleToggleOwner} 
+  style={actionButtonStyle("#EEF2FF", "#3730A3", "1px solid #C7D2FE")}
+>
+   Toggle Car Owner Mode
+</button>
+<button
+  onClick={() => setShowOwnerDocs(!showOwnerDocs)}
+  style={{ background: "none", border: "none", color: "#2563EB", fontSize: "0.8rem", cursor: "pointer", padding: "0.3rem 0", textAlign: "left" }}
+>
+  {showOwnerDocs ? "▲ Hide owner documents" : "📄 Manage owner documents"}
+</button>
+
+{showOwnerDocs && (
+  <div style={{ marginTop: "0.5rem", padding: "1rem", backgroundColor: "#f8f9fa", borderRadius: "8px" }}>
+    <h4 style={{ margin: "0 0 0.8rem 0" }}> Owner Photo</h4>
+    <p style={{ fontSize: "0.8rem", color: user?.owner_photo ? "#28a745" : "#dc3545" }}>
+      {user?.owner_photo ? "✅ Photo uploaded" : "⚠️ Required before enabling Owner mode"}
+    </p>
+    <label style={{ display: "block", fontSize: "0.85rem", marginBottom: "0.3rem" }}>Photo:</label>
+   {user?.owner_photo && (
+  <div style={{ marginBottom: "0.5rem" }}>
+    <img
+      src={user.owner_photo}
+      alt="Owner photo"
+      style={{ width: "220px", height: "120px", objectFit: "cover", borderRadius: "8px", border: "1px solid #ddd", display: "block", marginBottom: "0.35rem" }}
+    />
+    <button
+      onClick={() => handleDeleteDoc('owner', 'owner_photo')}
+      style={{ fontSize: "0.75rem", color: "#dc3545", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+    >
+      🗑️ Delete photo
+    </button>
+  </div>
+)}
+    <input type="file" accept="image/*" onChange={(e) => setOwnerDocs({ ...ownerDocs, owner_photo: e.target.files[0] })} style={{ marginBottom: "0.8rem", display: "block" }} />
+    <button onClick={handleUploadOwnerDocs} style={{ padding: "0.5rem 1rem", backgroundColor: "#6f42c1", color: "#fff", border: "none", borderRadius: "6px", cursor: "pointer" }}>
+      Upload Owner Photo
+    </button>
+  </div>
+)}
+
             </div>
           </div>
         ) : (

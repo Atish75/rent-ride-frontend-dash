@@ -50,13 +50,13 @@ function HomePage() {
     if (e) e.preventDefault();
 
     if (!selectedCar) {
-      alert("Pehle koi car select karein.");
+      alert("fisrt select any car.");
       return;
     }
 
     if (tripType === 'POINT_TO_POINT') {
       if (!startCoords || !endCoords) {
-        alert("Pickup aur drop-off dono location select karein map par.");
+        alert("Select location of both Pickup and drop-off .");
         return;
       }
     } else {
@@ -361,7 +361,7 @@ function HomePage() {
                   <button 
                     onClick={() => {
                       if (!isAuthenticated) {
-                        alert("Pehle login kijiye!");
+                        alert("Do Login First!");
                         navigate("/login");
                       } else {
                         setSelectedCar(car);

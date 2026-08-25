@@ -349,11 +349,11 @@ const handleStartRide = async (bookingId) => {
                   
                   {b.trip_type === 'POINT_TO_POINT' ? (
                     <span style={{ color: "#475569", fontSize: "0.875rem", fontWeight: "300" }}>
-                      🛣️ One-way trip{b.distance_km && ` — ${b.distance_km} km`}
+                       One-way trip{b.distance_km && ` — ${b.distance_km} km`}
                     </span>
                   ) : (
                     <span style={{ color: "#475569", fontSize: "0.875rem", fontWeight: "300" }}>
-                      📅 {b.start_date} → {b.end_date}
+                       {b.start_date} → {b.end_date}
                     </span>
                   )}
                   <br />
